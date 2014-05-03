@@ -1,0 +1,2010 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>OO Design Patterns</title>
+    <link rel="stylesheet" href="base/jquery.ui.all.css">
+    <script src="jquery-1.9.1.js"></script>
+    <script src="ui/jquery.ui.core.js"></script>
+    <script src="ui/jquery.ui.widget.js"></script>
+    <script src="ui/jquery.ui.accordion.js"></script>
+    <link rel="stylesheet" href="demos.css">
+    <script>
+    $(function() {
+        $( "#accordion" ).accordion({
+            collapsible: true,
+            heightStyle: "content",
+            active: true
+        });
+        $("[id=code]").attr("rows", 20);
+        $("[id=code]").attr("cols", 60);
+    });
+    </script>
+</head>
+<body>
+
+<div id="accordion">
+    <h3>Creational Pattern - Abstract Factory Pattern</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Provides an interface for creating a family of related or dependent objects without specifying their concrete class.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: Use of this pattern makes it possible to interchange concrete implementations without changing the code that uses them, even at runtime. However, employment of this pattern, as with similar design patterns, may result in unnecessary complexity and extra work in the initial writing of code. Additionally, higher levels of separation and abstraction can result in systems which are more difficult to debug and maintain. Therefore, as in all software designs, the trade-offs must be carefully evaluated.
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>The system needs to be independent from the way the products it works with are created.
+                            <li>The system is or should be configured to work with multiple families of products.
+                            <li>A family of products is designed to work only all together.
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>:
+                        <ul>
+                            <li>[+] AbstractFactory class declares only an interface for creating the products. The actual creation is the task of the ConcreteProduct classes, where a good approach is applying the Factory Method design pattern for each product of the family.
+                            <li>[+] Extending factories can be done by using one Create method for all products and attaching information about the type of product needed.
+                        </ul>
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.creational.abstractfactory;
+
+interface GUIFactory {
+    Button createButton();
+}
+
+interface Button {
+    void paint();
+}
+
+class WinGUIFactory implements GUIFactory {
+    public Button createButton() {
+        return new WinButton();
+    }
+}
+
+class OSXGUIFactory implements GUIFactory {
+    public Button createButton() {
+        return new OSXButton();
+    }
+}
+
+class WinButton implements Button {
+    public void paint() {
+        System.out.println("Windows Button");
+    }
+}
+
+class OSXButton implements Button {
+    public void paint() {
+        System.out.println("OSX Button");
+    }
+}
+
+public class Code {
+    public static void main(String args[]) {
+        GUIFactory factory = new WinGUIFactory();
+        Button button = factory.createButton();
+        button.paint();
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Creational Pattern - Builder Pattern</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>:
+                        <ul>
+                            <li>Separate the construction of a complex object from its representation allowing the same construction process to create various representation.
+                            <li>As Joshua Bloch states in Effective Java, 2nd Edition: The builder pattern is a good choice when designing classes whose constructors or static factories would have more than a handful of parameters.
+                            <li>The builder exposes the attributes the generated object should have, but hides how to set them.
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>:
+                        <ul>
+                            <li>In the case of the Abstract Factory, the client uses the factory's methods to create its own objects. In the Builder's case, the Builder class is instructed on how to create the object and then it is asked for it, but the way that the class is put together is up to the Builder class, this detail making the difference between the two patterns. Builder often builds a Composite.
+                            <li>Consider a restaurant. The creation of "today's meal" is a factory pattern, because you tell the kitchen "get me today's meal" and the kitchen (factory) decides what object to generate, based on hidden criteria.<br/>
+                            The builder appears if you order a custom pizza. In this case, the waiter tells the chef (builder) "I need a pizza; add cheese, onions and bacon to it!"
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>The creation algorithm of a complex object is independent from the parts that actually compose the object
+                            <li>The system needs to allow different representations for the objects that are being built
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>: N/A
+                    </p>
+                    <p>
+                        <b><u>Reference URL:</u></b> <a target="_new" href="http://stackoverflow.com/questions/328496/when-would-you-use-the-builder-pattern">Ref URL 1</a>
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.creational.builder;
+
+class Entity {
+    private int id;
+    private String name;
+
+    private Entity(Builder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+    }
+
+    @Override
+    public String toString() {
+        return "id=" + this.id + ", name=" + this.name;
+    }
+
+    public static class Builder {
+
+        private int id;
+        private String name;
+
+        public Builder id(int id) {
+            this.id = id;
+            return this;
+        }
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+        public Entity build() {
+            return new Entity(this);
+        }
+    }
+}
+
+public class Code {
+    public static void main(String args[]) {
+        Entity entity = new Entity.Builder().id(1).name("Hello World").build();
+        System.out.println(entity);
+    }
+}
+                        </textarea>
+                    </p>
+                    <p>
+                        <textarea id="code">
+ /** "Product" */
+class Pizza {
+    private String dough = "";
+    private String sauce = "";
+    private String topping = "";
+ 
+    public void setDough(final String dough) {
+        this.dough = dough;
+    }
+
+    public void setSauce(final String sauce) {
+        this.sauce = sauce;
+    }
+
+    public void setTopping(final String topping) {
+        this.topping = topping;
+    }
+}
+ 
+ 
+ /** "Abstract Builder" */
+abstract class PizzaBuilder {
+    protected Pizza pizza;
+
+    public abstract void buildDough();
+    public abstract void buildSauce();
+    public abstract void buildTopping();
+
+    public void createNewPizzaProduct() {
+        this.pizza = new Pizza();
+    }
+
+    public Pizza getPizza() {
+        return this.pizza;
+    }
+}
+ 
+ 
+ /** "ConcreteBuilder" */
+class HawaiianPizzaBuilder extends PizzaBuilder {
+    @Override public void buildDough() {
+        this.pizza.setDough("cross");
+    }
+
+    @Override public void buildSauce() {
+        this.pizza.setSauce("mild");
+    }
+
+    @Override public void buildTopping() {
+        this.pizza.setTopping("ham+pineapple");
+    }
+}
+
+/** "ConcreteBuilder" */
+class SpicyPizzaBuilder extends PizzaBuilder {
+    @Override public void buildDough() {
+        this.pizza.setDough("pan baked");
+    }
+
+    @Override public void buildSauce() {
+        this.pizza.setSauce("hot");
+    }
+
+    @Override public void buildTopping() {
+        this.pizza.setTopping("pepperoni+salami");
+    }
+}
+
+
+/** "Director" */
+class Waiter {
+    private PizzaBuilder pizzaBuilder;
+
+    public void setPizzaBuilder(final PizzaBuilder pb) {
+        this.pizzaBuilder = pb;
+    }
+
+    public Pizza getPizza() {
+        return this.pizzaBuilder.getPizza();
+    }
+
+    public void constructPizza() {
+        this.pizzaBuilder.createNewPizzaProduct();
+        this.pizzaBuilder.buildDough();
+        this.pizzaBuilder.buildSauce();
+        this.pizzaBuilder.buildTopping();
+    }
+}
+ 
+ 
+/** A customer ordering a pizza. */
+class BuilderExample {
+
+    public static void main(final String[] args) {
+
+        final Waiter waiter = new Waiter();
+
+        final PizzaBuilder hawaiianPizzaBuilder = new HawaiianPizzaBuilder();
+        final PizzaBuilder spicyPizzaBuilder = new SpicyPizzaBuilder();
+
+        waiter.setPizzaBuilder(hawaiianPizzaBuilder);
+        waiter.constructPizza();
+
+        final Pizza pizza = waiter.getPizza();
+
+        waiter.setPizzaBuilder(spicyPizzaBuilder);
+        waiter.constructPizza();
+
+        final Pizza anotherPizza = waiter.getPizza();
+    }
+}                        
+                        </textarea>
+                     </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Creational Pattern - Factory Pattern</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Defines an interface for creating an object but lets subclass decide which class to instantiate. Factory Method lets a class defer instantiation to subclass
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: N/A
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>The creation of an object precludes its reuse without significant duplication of code.
+                            <li>The creation of an object requires access to information or resources that should not be contained within the composing class.
+                            <li>The lifetime management of the generated objects must be centralized to ensure a consistent behavior within the application.
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>:
+                        <ul>
+                            <li>[-] Since the pattern relies on using a private constructor, the class cannot be extended. Any subclass must invoke the inherited constructor, but this cannot be done if that constructor is private.
+                            <li>[-] If we do extend the class (e.g., by making the constructor protected this is risky but feasible), the subclass must provide its own re-implementation of all factory methods with exactly the same signatures. 
+                            <li>[+] All problems could be alleviated by altering the underlying programming language to make factories first-class class members
+                            <li>[+] The main reason for which the factory pattern is used is that it introduces a separation between the application and a family of classes (it introduces weak coupling instead of tight coupling hiding concrete classes from the application). It provides a simple way of extending the family of products with minor changes in application code.
+                            <li>[+] It provides customization hooks. When the objects are created directly inside the class it's hard to replace them by objects which extend their functionality. If a factory is used instead to create a family of objects the customized objects can easily replace the original objects, configuring the factory to create them.
+                        </ul>
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.creational.factory;
+
+public class Code {
+    public static void main(String args[]) {
+        PizzaStore store = new CAPizzaStore();
+        store.orderPizza("cheese");
+        store = new NYPizzaStore();
+        store.orderPizza("cheese");
+    }
+}
+
+abstract class PizzaStore {
+    private Pizza pizza;
+    public Pizza orderPizza(String type) {
+        this.pizza = createPizza(type);
+        this.pizza.prepare();
+        this.pizza.bake();
+        this.pizza.cut();
+        this.pizza.box();
+        
+        return this.pizza;
+    }
+    abstract Pizza createPizza(String type);
+}
+class CAPizzaStore extends PizzaStore {
+    Pizza createPizza(String type) {
+        if ("cheese".equalsIgnoreCase(type)) {
+            return new CAStyleCheesePizza();
+        }
+        return null;
+    }
+}
+class NYPizzaStore extends PizzaStore {
+    Pizza createPizza(String type) {
+        if ("cheese".equalsIgnoreCase(type)) {
+            return new NYStyleCheesePizza();
+        }
+        return null;
+    }
+}
+abstract class Pizza {
+    String name;
+    public String getName() {
+        return this.name;
+    }
+    public void prepare() {
+        System.out.println("Preparing " + this.name);
+    }
+    public void bake() {
+        System.out.println("Baking...");
+    }
+    public void cut() {
+        System.out.println("Cutting...");
+    }
+    public void box() {
+        System.out.println("Boxing...");
+    }
+}
+class CAStyleCheesePizza extends Pizza {
+    public CAStyleCheesePizza() {
+        name = "CAStyleCheesePizza";
+    }
+}
+class NYStyleCheesePizza extends Pizza {
+    public NYStyleCheesePizza() {
+        name = "NYStyleCheesePizza";
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Creational Pattern - Singleton</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Ensures the class has only one instance and provides a global point of access to it.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: 
+                        <ul>
+                            <li>Thread-safe implementation for multi-threading use.
+                            <li>Lazy instantiation using double locking mechanism.
+                            <li>Early instantiation using implementation with static field
+                            <li>Protected Constructor
+                            <li>Multiple singleton instances if classes loaded by different classloaders access a singleton.
+                            <li>Serialization
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>: Singleton pattern should be used when there must be exactly one instance of a class, and when it must be accessible to clients from a global access point.
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>:
+                        <ul>
+                            <li>Multithreading - A special care should be taken when singleton has to be used in a multithreading application.
+                            <li>Serialization - When Singletons are implementing Serializable interface they have to implement <b><u>readResolve</u></b> method in order to avoid having 2 different objects.
+                            <li>Classloaders - If the Singleton class is loaded by 2 different class loaders we'll have 2 different classes, one for each class loader.
+                            <li>Global Access Point represented by the class name - The singleton instance is obtained using the class name. At the first view this is an easy way to access it, but it is not very flexible. If we need to replace the Singleton class, all the references in the code should be changed accordinglly.
+                        </ul>
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.creational.singleton;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+public class Code {
+    public static void main(String args[]) {
+        Code code = new Code();
+        Singleton instance = Singleton.getInstance();
+        System.out.println("Instance Created");
+        code.serialize(instance);
+        System.out.println("Instance Serialized");
+        Singleton newInstance = (Singleton)code.deserialize();
+        System.out.println("Instance Deserialized");
+        System.out.println(instance);
+    }
+
+    public void serialize(Object object) {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("singletonObject.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(object);
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
+
+    public Object deserialize() {
+        Object obj = null;
+        try {
+            FileInputStream fileIn = new FileInputStream("singletonObject.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            obj = in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            c.printStackTrace();
+        }
+        return obj;
+    }
+}
+
+class Singleton implements Serializable {
+    private static Singleton instance;
+
+    private Singleton() {
+        System.out.println("Private Constructor");
+    }
+
+    public static Singleton getInstance() {
+        if (instance == null) {
+            synchronized (Singleton.class) {
+                if (instance == null) {
+                    System.out.println("First time getInstance was invoked!");
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+
+    @Override
+    public String toString() {
+        return "Singleton class";
+    }
+
+    // This method is called immediately after an object of this class is
+    // deserialized.
+    // This method returns the singleton instance.
+    protected Object readResolve() {
+        System.out.println("Accessed readResolve");
+        return getInstance();
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>---</h3><div></div>
+    <h3>Structural Pattern - Adapter</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Converts the interface of a class into another interface client expects. Adapter lets classes work together, that could not otherwise because of incompatible interfaces.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: N/A
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>: When you have a class(Target) that invokes methods defined in an interface and you have a another class(Adapter) that doesn't implement the interface but implements the operations that should be invoked from the first class through the interface. You can change none of the existing code. The adapter will implement the interface and will be the bridge between the 2 classes.
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>: N/A
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.structural.adapter;
+
+interface ThreePinInterface {
+    void connectThreePin();
+    void powerOnThreePin();
+}
+interface TwoPinInterface {
+    void connectTwoPin();
+    void powerOnTwoPin();
+}
+class ThreePinPlug implements ThreePinInterface {
+    public void connectThreePin() {
+        System.out.println("Connction of 3 Pin Plug Successful");
+    }
+    public void powerOnThreePin() {
+        System.out.println("3 Pin Plug Power On");
+    }
+}
+class TwoPinPlug implements TwoPinInterface {
+    public void connectTwoPin() {
+        System.out.println("Connction of 2 Pin Plug Successful");
+    }
+    public void powerOnTwoPin() {
+        System.out.println("2 Pin Plug Power On");
+    }
+}
+
+class TwoPinAdapter implements ThreePinInterface {
+    TwoPinInterface twoPinInterface;
+    
+    public TwoPinAdapter(TwoPinInterface twoPinInterface) {
+        this.twoPinInterface = twoPinInterface;
+    }
+    
+    public void connectThreePin() {
+        this.twoPinInterface.connectTwoPin();
+    }
+    public void powerOnThreePin() {
+        this.twoPinInterface.powerOnTwoPin();
+    }
+}
+public class Code {
+    public static void main(String args[]) {
+        TwoPinInterface twoPin = new TwoPinPlug();
+        TwoPinAdapter towPinAdapter = new TwoPinAdapter(twoPin);
+        towPinAdapter.connectThreePin();
+        towPinAdapter.powerOnThreePin();
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Structural Pattern - Bridge Pattern</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Decouple an abstraction from its implementation so that the two can vary independtly. Program to an interface and not implementation.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>:
+                        <ul>
+                            <li>Decoupling interface and implementation. An implementation is not bound permanently to an interface. The implementation of an abstraction can be configured and even switched at run-time.
+                            <li>Abstraction and Implementor hierarchies can be extended independently.
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>: The bridge pattern applies when there is a need to avoid permanent binding between an abstraction and an implementation and when the abstraction and implementation need to vary independently. Using the bridge pattern would leave the client code unchanged with no need to recompile the code.
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>: N/A
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.structural.bridge;
+
+public class Code {
+    public static void main(String args[]) {
+        Persistence persistence = new DBPersistence();
+        persistence.persist("Object");
+        persistence = new FilePersistence();
+        persistence.persist("Object");
+    }
+}
+
+interface Persistence {
+    public void persist(Object obj);
+}
+class DBPersistence implements Persistence {
+    public void persist(Object obj) {
+        System.out.println("Persisting " + obj + " to Database");
+    }
+}
+class FilePersistence implements Persistence {
+    public void persist(Object obj) {
+        System.out.println("Persisting " + obj + " to File");
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Structural Pattern - Composite</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Compose objects into tree structures to represent part-whole hirarchy. Composite lets clients treat individual objects and compositions of objects uniformly.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: 
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>: The composite pattern applies when there is a part-whole hierarchy of objects and a client needs to deal with objects uniformly regardless of the fact that an object might be a leaf or a branch. 
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>: N/A
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.structural.composite;
+
+import java.util.List;
+import java.util.ArrayList;
+
+public class Code {
+    public static void main(String args[]) {
+        MainMenuItem menuItem = new MainMenuItem();
+        MenuItem childItem1 = new ChildMenuItem();
+        menuItem.addToMenu(childItem1);
+        MenuItem childItem2 = new ChildMenuItem();
+        menuItem.addToMenu(childItem2);
+        menuItem.printMenu();
+    }
+}
+
+interface MenuItem {
+    public void print();
+}
+class MainMenuItem implements MenuItem {
+    private List<MenuItem> navMenu = new ArrayList<MenuItem>();
+    public void print() {
+        System.out.println("Main Menu Item");
+    }
+    public void addToMenu(MenuItem menu) {
+        this.navMenu.add(menu);
+    }
+    public void printMenu() {
+        this.print();
+        for (MenuItem menuItem : this.navMenu) {
+            menuItem.print();
+        }
+    }
+}
+class ChildMenuItem implements MenuItem {
+    public void print() {
+        System.out.println("Child Menu Item");
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Structural Pattern - Decorator</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Attach additional responsibility to an object dynamically keeping the same interface. Decorators provide a flexible alternative to subclassing for extending functionality.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: The decorator pattern is an alternative to subclassing. Subclassing adds behavior at compile time, and the change affects all instances of the original class; decorating can provide new behavior at run-time for individual objects. Decoration is more convenient for adding functionalities to objects instead of entire classes at runtime. With decoration it is also possible to remove the added functionalities dynamically. Decoration adds functionality to objects at runtime which would make debugging system functionality harder.
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>: N/A
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>:
+                        <ul>
+                            <li>Class overflow.
+                        </ul>
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.structural.decorator;
+
+public class Code {
+    public static void main(String args[]) {
+        Beverage beverage1 = new Expresso();
+        System.out.println(beverage1.getDescription() + "= $" + beverage1.cost());
+        
+        Beverage beverage2 = new Mocha(beverage1);
+        System.out.println(beverage2.getDescription() + "= $" + beverage2.cost());
+    }
+}
+abstract class Beverage {
+    String description = "Unknown Beverage";
+
+    String getDescription() {
+        return description;
+    }
+    
+    abstract double cost();
+}
+class Expresso extends Beverage {
+    Expresso() {
+        description = "Expresso";
+    }
+    public double cost() {
+        return 1.99;
+    }
+}
+class HouseBlend extends Beverage {
+    HouseBlend() {
+        description = "House Blend";
+    }
+    public double cost() {
+        return 0.99;
+    }
+}
+abstract class CondimentDecorator extends Beverage {
+    abstract String getDescription();
+}
+class Mocha extends CondimentDecorator {
+    Beverage beverage;
+    Mocha(Beverage beverage) {
+        this.beverage = beverage;
+    }
+    double cost() {
+        return this.beverage.cost() + 0.50;
+    }
+    String getDescription() {
+        return beverage.getDescription() + ", Mocha";
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Structural Pattern - Facade</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Provides a unified interface to a set of interfaces in a subsystem. Facade defines a higher-level interface that makes the subsystem easier to use.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: A Facade is used when one wants an easier or simpler interface to an underlying implementation object. Alternatively, an adapter is used when the wrapper must respect a particular interface and must support polymorphic behavior. A decorator makes it possible to add or alter behavior of an interface at run-time.
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>: N/A
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>: N/A
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.structural.facade;
+
+public class Code {
+    public static void main(String args[]) {
+        TV tv = new TV();
+        tv.start();
+    }
+}
+class TV {
+    private TVPSU psu;
+    private TVModule module;
+    private TVPanel panel;
+    
+    TV() {
+        this.psu = new TVPSU();
+        this.module = new TVModule();
+        this.panel = new TVPanel();
+    }
+    public void start() {
+        this.psu.power();
+        this.module.power();
+        this.panel.power();
+    }
+}
+class TVPSU {
+    public void power() {
+        System.out.println("Power Supply Unit up");
+    }
+}
+class TVModule {
+    public void power() {
+        System.out.println("Module Power up");
+    }
+}
+class TVPanel {
+    public void power() {
+        System.out.println("TV Panel Power up");
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Structural Pattern - Flyweight</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Use sharing to support a large number of objects efficiently.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: A client needs a flyweight object; it calls the factory to get the flyweight object. The factory checks a pool of flyweights to determine if a flyweight object of the requested type is in the pool, if there is, the reference to that object is returned. If there is no object of the required type, the factory creates a flyweight of the requested type, adds it to the pool, and returns a reference to the flyweight. The flyweight maintains intrinsic state (state that is shared among the large number of objects that we have created the flyweight for) and provides methods to manipulate external state (State that vary from object to object and is not common among the objects we have created the flyweight for).
+                        <br/>
+                        Appropriate for small, fine-grained classes like individual characters or icons on a screen.
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>: N/A
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>:
+                        <ul>
+                            <li> Concurrency : Special consideration must be made in scenarios where Flyweight objects are created on multiple threads. If the list of values is finite and known in advance the Flyweights can be instantiated ahead of time and retrieved from a container on multiple threads with no contention. If Flyweights are instantiated on multiple threads there are two options:
+                                <ul>
+                                    <li>Make Flyweight instantiation single threaded thus introducing contention and ensuring one instance per value.
+                                    <li>Allow concurrent threads to create multiple Flyweight instances thus eliminating contention and allowing multiple instances per value. This option is only viable if the equality criterion is met.
+                                </ul>
+                        </ul>
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.structural.flyweight;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Code {
+    public static void main(String[] args) {
+        TaxStatesFactory taxFactory = new TaxStatesFactory();
+        System.out.println("Flyweight weight @ start =  " + taxFactory.getTaxStates().size());
+        taxFactory.fileTax("mh", 10000);
+        taxFactory.fileTax("mp", 20000);
+        System.out.println("Flyweight weight @ 1 run = " + taxFactory.getTaxStates().size());
+        taxFactory.fileTax("mh", 100000);
+        taxFactory.fileTax("mp", 200000);
+        System.out.println("Flyweight weight @ 2 run = " + taxFactory.getTaxStates().size());
+        taxFactory.fileTax("mh", 100000);
+        taxFactory.fileTax("mp", 200000);
+        System.out.println("Flyweight weight @ 3 run = " + taxFactory.getTaxStates().size());
+    }
+}
+
+interface TaxState {
+    long calculateTax(long income);
+}
+
+class MHState implements TaxState {
+    public long calculateTax(long income) {
+        return (income * 20) / 100;
+    }
+}
+class MPState implements TaxState {
+    public long calculateTax(long income) {
+        return (income * 5) / 100;
+    }
+}
+class TaxStatesFactory {
+    private Map<String, TaxState> taxStates;
+    
+    TaxStatesFactory() {
+        taxStates = new HashMap<String, TaxState>();
+    }
+    
+    public void fileTax(String state, long income) {
+        TaxState taxState = this.taxStates.get(state);
+        if (taxState == null) {
+            if ("mh".equalsIgnoreCase(state)) {
+                taxState = new MHState();
+            } else if ("mp".equalsIgnoreCase(state)) {
+                taxState = new MPState();
+            }
+            this.taxStates.put(state, taxState);
+        }
+        long tax = taxState.calculateTax(income);
+        System.out.println("Tax = " + tax);
+    }
+
+    public Map<String, TaxState> getTaxStates() {
+        return taxStates;
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Structural Pattern - Front Controller</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Provides a central point for all handling requests. The pattern relates to the design of the web application.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: N/A
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>: N/A
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>: N/A
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">Struts, Spring, Ruby on Rails ... etc</textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Structural Pattern - Proxy</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Provide a surrogate or placeholder for another object to controll access to it. Deferes the cost of initialization and creation of an object until it is actually required. Useful in programs like web browsers and word processors to lay out text background around images until the images are actually loaded. 
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: A proxy, in its most general form, is a class functioning as an interface to something else. The proxy could interface to anything: a network connection, a large object in memory, a file, or some other resource that is expensive or impossible to duplicate.<br/>
+
+                        A well-known example of the proxy pattern is a reference counting pointer object.<br/>
+
+                        In situations where multiple copies of a complex object must exist, the proxy pattern can be adapted to incorporate the flyweight pattern in order to reduce the application's memory footprint. Typically, one instance of the complex object and multiple proxy objects are created, all of which contain a reference to the single original complex object. Any operations performed on the proxies are forwarded to the original object. Once all instances of the proxy are out of scope, the complex object's memory may be deallocated.
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>When an object takes a long time to load [Virtual Proxy]
+                            <li>When an object is on a remote machine and loading it over the network may be slow [Remote Proxy]
+                            <li>If an object has limited access rights, the proxy  can authenticate  a user [Access Proxy]
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>:
+                        <ul>
+                            <li>The Proxy pattern sets the relationship between a proxy and the real subject at compile time, whereas the decorators can be recursively constructed at runtime.
+                            <li>Proxy pattern is generally applicable to the client tier and facade is applicable to the business tier.
+                            <li>The most obvious difference is that a Proxy has *the same interface* as the original object. That is, clients don't even need to know whether they are acting on a proxy or directly on the real thing.
+                            <li>The intent of the Facade, in contrast, is to *change* the interface - generally to make it more coarse grained.
+                            <li>With other words, switching clients from using the original objects to using a Proxy typically needs no work at all. Switching them to using a Facade typically should significantly change the clients - that is, simplify them.
+                        </ul>
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.structural.proxy;
+
+public class Code {
+    public static void main(String args[]) {
+        Image img1 = new ProxyImage("Img1");
+        Image img2 = new ProxyImage("Img2");    
+        img1.displayImage();
+        img2.displayImage();
+        img1.displayImage();
+        img2.displayImage();
+        img1.displayImage();
+        img2.displayImage();
+    }
+}
+
+interface Image {
+    void displayImage();
+}
+class RealImage implements Image {
+    private String filename;
+    RealImage(String filename) {
+        this.filename = filename;
+        this.loadImage();
+    }
+    private void loadImage() {
+        System.out.println("Loading Image " + this.filename + " from Disk");
+    }
+    public void displayImage() {
+        System.out.println("Displaying Image " + this.filename + " from Disk");
+    }
+}
+class ProxyImage implements Image {
+    private RealImage realImage;
+    private String filename;
+    ProxyImage(String filename) {
+        this.filename = filename;
+    }
+    public void displayImage() {
+        if (this.realImage == null) {
+            this.realImage = new RealImage(this.filename);
+        }
+        this.realImage.displayImage();
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>---</h3><div></div>
+    <h3>Behavioral Pattern - Chain of Responsibility</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Avoid coupling the sender of the request to its receiver by giving more than one object a chance to handle the request. Chain the receiving objects and pass the  request along the chain until an object handles it. This pattern promotes the idea of loose coupling, which is considered a programming best practice.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: The Chain of Responsibility design pattern allows an object to send a command without knowing what object will receive and handle it. The request is sent from one object to another making them parts of a chain and each object in this chain can handle the command, pass it on or do both. The most usual example of a machine using the Chain of Responsibility is the vending machine coin slot: rather than having a slot for each type of coin, the machine has only one slot for all of them. The dropped coin is routed to the appropriate storage place that is determined by the receiver of the command.
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>More than one object can handle a command
+                            <li>The handler is not known in advance
+                            <li>The handler should be determined automatically
+                            <li>Its wished that the request is addressed to a group of objects without explicitly specifying its receiver
+                            <li>The group of objects that may handle the command must be specified in a dynamic way
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>:
+                        <ul>
+                            <li>The fundamental flaw of the pattern is the fact that it gets easily broken: if the programmer forgets to call the next handler in the concreteHandler the request gets lost on the way. This problem comes from the fact that the execution is not handled entirely by the superclass and the call is triggered in the superclass.
+                            <li>When implementing the CoR pattern a special care should be taken for the request representation. The request is not considered a distinctive part of the CoR pattern, but it is still used in all the components of the pattern.
+                            <li>Another flaw of the Chain of Responsibility is the fact that some requests may end up unhandled due to the wrong implementation of concrete handler, their propagation slowing down the rest of the application. This means that extra care is needed when taking into account the requests that may appear in the process.
+                            <li><a href="http://javapapers.com/design-patterns/chain-of-responsibility-design-pattern/">Ref Link</a></li>
+                        </ul>
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.behavioral.chainofresponsibility;
+
+public class Code {
+    public static void main(String args[]) {
+        Logger logger = new Info();
+        logger.log(Logger.TRACE, "my message");
+    }
+}
+
+abstract class Logger {
+    final static int INFO = 1;
+    final static int DEBUG = 2;
+    final static int TRACE = 3;
+
+    protected Logger successor;
+    public void setSuccessor(Logger successor) {
+        this.successor = successor;
+    }
+    abstract void log(int level, String message);
+}
+class Info extends Logger {
+    Info() {
+        this.setSuccessor(new Debug());
+    }
+    public void log(int level, String message) {
+        if (level == this.INFO) {
+            System.out.println("Info: " + message);
+        } else {
+            successor.log(level, message);
+        }
+    }
+}
+class Debug extends Logger {
+    Debug() {
+        this.setSuccessor(new Trace());
+    }
+    public void log(int level, String message) {
+        if (level == this.DEBUG) {
+            System.out.println("Debug: " + message);
+        } else {
+            successor.log(level, message);
+        }
+    }
+}
+class Trace extends Logger {
+    public void log(int level, String message) {
+        System.out.println("Trace: " + message);
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Behavioral Pattern - Command</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>:
+                        The command pattern allows you to decouple the requester of an action from the object that actually performs that action.<br/>
+                        Encapsulates a request as an object, thereby letting you parameterize client with different requests, queue or log requests, and support undoable operations.
+                        
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: Four terms always associated with the command pattern are command, receiver, invoker and client. Using command objects makes it easier to construct general components that need to delegate, sequence or execute method calls at a time of their choosing without the need to know the class of the method or the method parameters
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>parameterizes objects depending on the action they must perform
+                            <li>specifies or adds in a queue and executes requests at different moments in time
+                            <li>offers support for undoable actions (the Execute method can memorize the state and allow going back to that state)
+                            <li>structures the system in high level operations that based on primitive operations
+                            <li>decouples the object that invokes the action from the object that performs the action. Due to this usage it is also known as Producer - Consumer design pattern.
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>: The main advantage of the command design pattern is that it decouples the object that invokes the operation from the one that know how to perform it. And this advantage must be kept. There are implementations of this design pattern in which the invoker is aware of the concrete commands classes. This is wrong making the implementation more tightly coupled. The invoker should be aware only about the abstract command class.
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.behavioral.command;
+
+public class Code {
+    public static void main(String args[]) {
+        Light light = new Light();
+        Command command = new LightOnCommand(light);
+        RemoteControl remote = new RemoteControl();
+        remote.setCommand(command);
+        remote.buttonWasPressed();
+        remote.undoCommand();
+    }
+}
+
+interface Command {
+    void execute();
+    void undo();
+}
+class LightOnCommand implements Command {
+    private Light light;
+    
+    LightOnCommand(Light light) {
+        this.light = light;
+    }
+    
+    public void execute() {
+        this.light.on();
+    }
+    public void undo() {
+        this.light.off();
+    }
+}
+class RemoteControl {
+    private Command slot;
+    private Command undoCommand = null;
+
+    public void setCommand(Command command) {
+        this.slot = command;
+    }
+    public void buttonWasPressed() {
+        this.slot.execute();
+        undoCommand = this.slot;
+    }
+    public void undoCommand() {
+        undoCommand.undo();
+    }
+    
+}
+class Light {
+    public void on() {
+        System.out.println("Light ON");
+    }
+
+    public void off() {
+        System.out.println("Light OFF");
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Behavioral Pattern - Interpreter</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Given a language, define a representation for its grammar along with an interpreter that uses the representation to interpret sentences in the language.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: N/A
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>A specific area where Interpreter can be used are the rules engines.
+                            <li>The Interpreter pattern can be used to add functionality to the composite pattern.
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>:
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">JavaScript, Ruby, Perl etc</textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Behavioral Pattern - Iterator</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Provides an easy way to access elements of an aggregate object sequentially without exposing the underlying representation.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: N/A
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>access contents of a collection without exposing its internal structure.
+                            <li>support multiple simultaneous traversals of a collection.
+                            <li>provide a uniform interface for traversing different collection.
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>:
+                        <ul>
+                            <li>External vs. internal iterators - In languages like Java, C#, VB .NET, C++ is very easy to use external iterators.
+                            <li>Who defines the traversal algorithm? - The aggregate can implement it or the iterator as well. Usually the algorithm is defined in the iterator.
+                            <li>Robust Iterators - Can the aggregate be modified while a traversal is ongoing?
+                            <li>Multithreading iterators - First of all multithreading iterators should be robust iterators. Second of all they should work in multithreading environments.
+
+                        </ul>
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">java.util.Iterator</textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Behavioral Pattern - Mediator</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Define an object that encapsulates how a set of object interact. Mediator promotes loose coupling by keeping objects from referring to each other explicitely, and lets you vary thier interaction independently.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: A similarity can be made with the database systems.
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>Chat Application: The chat application is another example of the mediator pattern. In a chat application we can have several participants. It's not a good idea to connect each participant to all the others because the number of connections would be really high, there would be technical problems due to proxies and firewalls, etc... . <b>The most appropriate solution is to have a hub where all participants will connect; this hub is just the mediator class.</b>
+                            <li>An example where Mediator is useful is the design of a user and group capability in an operating system. A group can have zero or more users, and, a user can be a member of zero or more groups. The Mediator pattern provides a flexible and non-invasive way to associate and manage users and groups.
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>:
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.behavioral.mediator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Code {
+    public static void main(String args[]) {
+        Mediator mediator = new ApplicationMediator();
+        Colleague cColleague = new ConcreteColleague(mediator);
+        Colleague mColleague = new MobileColleague(mediator);
+        
+        mediator.addColleague(cColleague);
+        mediator.addColleague(mColleague);
+        
+        cColleague.send("Hello");
+        mColleague.send("Hello World");
+    }
+}
+
+interface Mediator {
+    public void send(String message, Colleague colleague);
+    public void addColleague(Colleague colleague);
+}
+
+abstract class Colleague {
+    public Mediator mediator;
+    
+    Colleague(Mediator mediator) {
+        this.mediator = mediator;
+    }
+    public void send(String message) {
+        mediator.send(message, this);
+    }
+    public Mediator getMediator() {
+        return mediator;
+    }
+    public abstract void receive(String message);
+}
+class ApplicationMediator implements Mediator {
+    private List<Colleague> colleagues = new ArrayList<Colleague>();
+    public void addColleague(Colleague colleague) {
+        this.colleagues.add(colleague);
+    }
+    public void send(String message, Colleague originator) {
+        for (Colleague colleague : colleagues) {
+            if (colleague != originator) {
+                colleague.receive(message);
+            }
+        }
+    }
+}
+class ConcreteColleague extends Colleague {
+    ConcreteColleague(Mediator mediator) {
+        super(mediator);
+    }
+
+    public void receive(String message) {
+        System.out.println("Hard Desk = " + message);
+    }
+}
+class MobileColleague extends Colleague {
+    MobileColleague(Mediator mediator) {
+        super(mediator);
+    }
+
+    public void receive(String message) {
+        System.out.println("Mobile Desk = " + message);
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Behavioral Pattern - Memento</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Without violating encapsulation, capture and externalize an objects internal state allowing the object to be restored to this state later.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: 
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>Database Transactions - Transactions are operations on the database that occur in an atomic, consistent, durable, and isolated fashion. A transaction can contain multiple operations on the database; each operation can succeed or fail, however a transaction guarantees that if all operations succeed, the transaction would commit and would be final. And if any operation fails, then the transaction would fail and all operations would rollback and leave the database as if nothing has happened.
+                            <li>Simple Calculator with Undo Operation - Simple example is a calculator that finds the result of addition of two numbers, with the additional option to undo last operation and restore previous result.
+                            <li>Serialization
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>:
+                        <ul>
+                            <li>[-] Some problems with this pattern is that the saving or restoring of state can be a time consuming process. Used incorrectly, it can expose the internal structure of your object, thus allowing any other object to change the state of your object.
+                            <li>[-/+] Serializing any private variable and writing the object state to a file at the same time the private varible's value is open to the world and the encapsulation seems to be failing here
+                            <br/>My understanding is the Memento pattern doesn't specify anything about the format/opacity/security of the memento/token itself. The memento's format (human-readable, fully-encrypted, or anywhere in between) is irrelevant to the pattern itself.
+                            <br/>
+                            I would argue that Serialization (XML or binary) is a fine example of a Memento implementation. The fact that it exposes object internals may mean that it isn't the best implementation for your project. However, it's still a valid implementation of the pattern. :)
+                        </ul>
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.behavioral.memento;
+
+public class Code {
+    public static void main(String args[]) {
+        EditorMemento editorMemento = new EditorMemento("Old State");
+        Editor editor = new Editor();
+        editor.setState("New State");
+        editor.save();
+        System.out.println("After Save = " + editor.editorContents);
+        editor.restoreToState(editorMemento);
+        System.out.println("After Restore = " + editor.editorContents);
+    }
+}
+
+class EditorMemento {
+    private final String editorState;
+    
+    EditorMemento(String state) {
+        this.editorState = state;
+    }
+    
+    public String getSavedState() {
+        return this.editorState;
+    }
+}
+class Editor {
+    public String editorContents;
+    public void setState(String state) {
+        this.editorContents = state;
+    }
+    public EditorMemento save() {
+        return new EditorMemento(this.editorContents);
+    }
+    public void restoreToState(EditorMemento memento) {
+        this.editorContents = memento.getSavedState();
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Behavioral Pattern - Observer</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Define a one-to-many dependency between objects where a state change in one object results in all its dependents being notified and updated automatically.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: It is mainly used to implement distributed event handling systems. The Observer pattern is also a key part in the familiar Model View Controller (MVC) architectural pattern. In fact the observer pattern was first implemented in Smalltalk's MVC based user interface framework. The observer pattern is implemented in numerous programming libraries and systems, including almost all GUI toolkits.
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>The change of a state in one object must be reflected in another object without keeping the objects tight coupled.
+                            <li>the framework we are writing needs to be enhanced in future with new observers with minimal changes.
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>:
+                        <ul>
+                            <li>[+] Push and pull communication methods
+                        </ul>
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.behavioral.observer;
+
+import java.util.Observer;
+import java.util.Observable;
+
+public class Code {
+    public static void main(String args[]) {
+        WeatherData weatherData = new WeatherData();
+        WeatherDisplay weatherDisplay = new WeatherDisplay(weatherData);
+        weatherData.setMeasurements(1, 2, 3);
+    }
+}
+
+class WeatherData extends Observable {
+    private float temperature;
+    private float humidity;
+    private float pressure;
+    
+    public void measurementsChanged() {
+        setChanged();
+        notifyObservers();
+    }
+    public void setMeasurements(float temperature, float humidity, float pressure) {
+        this.temperature = temperature;
+        this.humidity = humidity;
+        this.pressure = pressure;
+        this.measurementsChanged();
+    }
+    public float getTemperature() {
+        return temperature;
+    }
+    public float getHumidity() {
+        return humidity;
+    }
+    public float getPressure() {
+        return pressure;
+    }
+}
+class WeatherDisplay implements Observer {
+    Observable observable;
+    private float temperature;
+    private float humidity;
+    private float pressure;
+    WeatherDisplay(Observable observable) {
+        this.observable = observable;
+        observable.addObserver(this);
+    }
+    public void update(Observable o, Object arg) {
+        if (o instanceof WeatherData) {
+            WeatherData weatherData = (WeatherData) o;
+            this.temperature = weatherData.getTemperature();
+            this.humidity = weatherData.getHumidity();
+            this.pressure = weatherData.getPressure();
+            display();
+        }
+    }
+    void display() {
+        System.out.println("---WeatherDisplay Data---");
+        System.out.println("Temperature = " + temperature);
+        System.out.println("Humidity = " + humidity);
+        System.out.println("Pressure = " + pressure);
+    }
+    
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Behavioral Pattern - State</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Allow an object to alter its behavior when its internal state changes.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: This pattern is used in computer programming to encapsulate varying behavior for the same routine based on an object's state object. This can be a cleaner way for an object to change its behavior at runtime without resorting to large monolithic conditional statements.
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>: Workflow
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>: N/A
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.behavioral.state;
+
+public class Code {
+    public static void main(String args[]) {
+        GumballMachine gumballMachine = new GumballMachine(1);
+        gumballMachine.insertQuarter();
+        gumballMachine.insertQuarter();
+        gumballMachine.dispense();
+        gumballMachine.dispense();
+    }
+}
+interface State {
+    void insertQuarter();
+    void dispense();
+}
+class NoQuarterState implements State {
+    private GumballMachine gumballMachine;
+    public NoQuarterState(GumballMachine gumballMachine) {
+        this.gumballMachine = gumballMachine;
+    }
+    public void insertQuarter() {
+        System.out.println("You inserted a quarter");
+        gumballMachine.setState(gumballMachine.getHasQuarterState());
+    }
+    public void dispense() {
+        System.out.println("You need to pay first");
+    }
+}
+class HasQuarterState implements State {
+    private GumballMachine gumballMachine;
+    public HasQuarterState(GumballMachine gumballMachine) {
+        this.gumballMachine = gumballMachine;
+    }
+    public void insertQuarter() {
+        System.out.println("You cant insert another quarter");
+    }
+    public void dispense() {
+        System.out.println("Gumball rolling out of the slot...");
+        this.gumballMachine.setState(gumballMachine.getNoQuarterState());
+    }
+}
+class GumballMachine {
+    private State noQuarterState;
+    private State hasQuarterState;
+    private State state;
+
+    GumballMachine(int numGumballs) {
+        this.noQuarterState = new NoQuarterState(this);
+        this.hasQuarterState = new HasQuarterState(this);
+        this.state = this.noQuarterState;
+    }
+    void insertQuarter() {
+        this.state.insertQuarter();
+    }
+    void dispense() {
+        this.state.dispense();
+    }
+    void setState(State state) {
+        this.state = state;
+    }
+    public State getNoQuarterState() {
+        return this.noQuarterState;
+    }
+    public State getHasQuarterState() {
+        return this.hasQuarterState;
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Behavioral Pattern - Strategy</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Define a family of algorithm, encapsulate each one, and make them interchangable. Strategy lets algorithm vary independently form clients that use it.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: N/A
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>For instance, a class that performs validation on incoming data may use a strategy pattern to select a validation algorithm based on the type of data, the source of the data, user choice, and/or other discriminating factors. These factors are not known for each case until run-time, and may require radically different validation to be performed. The validation strategies, encapsulated separately from the validating object, may be used by other validating objects in different areas of the system (or even different systems) without code duplication.
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>: The strategy design pattern splits the behavior (there are many behaviors) of a class from the class itself. This has some advantages, but the main draw back is that a client must understand how the Strategies differ. Since clients get exposed to implementation issues the strategy design pattern should be used only when the variation in behavior is relevant to them.
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.behavioral.strategy;
+
+public class Code {
+    public static void main(String args[]) {
+        Duck mallardDuck = new MallardDuck();
+        mallardDuck.performFly();
+        mallardDuck.performQuack();
+
+        Duck rubberDuck = new RubberDuck();
+        rubberDuck.performFly();
+        rubberDuck.performQuack();
+    }
+}
+interface QuackBehavior {
+    void quack();
+}
+class Quack implements QuackBehavior {
+    public void quack() {
+        System.out.println("Quacking...");
+    }
+}
+class SqueakQuack implements QuackBehavior {
+    public void quack() {
+        System.out.println("Squeaking...");
+    }
+}
+interface FlyBehavior {
+    void fly();
+}
+class FlyWithWings implements FlyBehavior {
+    public void fly() {
+        System.out.println("Fly with wings");
+    }
+}
+class FlyWithNoWay implements FlyBehavior {
+    public void fly() {
+        System.out.println("Cant Fly");
+    }
+}
+abstract class Duck {
+    FlyBehavior flyBehavior;
+    QuackBehavior quackBehavior;
+    
+    void performFly() {
+        this.flyBehavior.fly();
+    }
+    void performQuack() {
+        this.quackBehavior.quack();
+    }
+    abstract void display();
+}
+class MallardDuck extends Duck {
+    MallardDuck() {
+        flyBehavior = new FlyWithWings();
+        quackBehavior = new Quack();
+    }
+    void display() {
+        System.out.println("Mallard Duck");
+    }
+}
+class RubberDuck extends Duck {
+    RubberDuck() {
+        flyBehavior = new FlyWithNoWay();
+        quackBehavior = new SqueakQuack();
+    }
+    void display() {
+        System.out.println("Rubber Duck");
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Behavioral Pattern - Template</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Define a skeleton for an algorithm in an operation, deferring some steps to subclasses. Template method lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: 
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>let subclasses implement (through method overriding) behavior that can vary
+                            <li>avoid duplication in the code: the general workflow structure is implemented once in the abstract class's algorithm, and necessary variations are implemented in each of the subclasses.
+                            <li>control at what point(s) subclassing is allowed. As opposed to a simple polymorphic override, where the base method would be entirely rewritten allowing radical change to the workflow, only the specific details of the workflow are allowed to change.
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>: Template method is using as an inverted controls structure, sometimes referred as "the Hollywood principle": from the superclass point of view: "Don't call us, we'll call you". This refers to the fact that instead of calling the methods from base class in the subclasses, the methods from subclass are called in the template method from superclass.
+                        Due to the above fact a special care should be paid to the access modifiers: the template method should be implemented only in the base class, and the primitive method should be implemented in the subclasses. A particular case of the template method is represented by the customization hooks.
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.behavioral.template;
+
+public class Code {
+    public static void main(String args[]) {
+        Tea tea = new Tea();
+        tea.prepareRecipe();
+        Coffee coffee = new Coffee();
+        coffee.prepareRecipe();
+    }
+}
+abstract class CaffineBeverage {
+    final void prepareRecipe() {
+        boilWater();
+        brew();
+        pour();
+        addCondiments();
+    }
+    abstract void brew();
+    abstract void addCondiments();
+    
+    void boilWater() {
+        System.out.println("Boiling water");
+    }
+    void pour() {
+        System.out.println("Pouring contents in cup");
+    }
+}
+class Tea extends CaffineBeverage {
+    void brew() {
+        System.out.println("Steeping the tea");
+    }
+    void addCondiments() {
+        System.out.println("Adding lemon");
+    }
+}
+class Coffee extends CaffineBeverage {
+    void brew() {
+        System.out.println("Dipping coffee via filter");
+    }
+    void addCondiments() {
+        System.out.println("Adding Sugar and Milk");
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>Behavioral Pattern - Visitor</h3>
+    <div>
+        <table>
+            <tr>
+                <td valign="top">
+                    <p>
+                        <b><u>Definition</u></b>: Represents an operation to be performed on the elements of an object structure. Visitor lets you define a new operation without changing the classes of the elements on which it operates.
+                    </p>
+                    <p>
+                        <b><u>Details</u></b>: A possible approach to apply a specific operation on objects of different types in a collection would be the use if blocks in conjunction with 'instanceof' for each element. This approach is not a nice one, not flexible and not object oriented at all. At this point we should think to the Open Close principle and we should remember from there that we can replace if blocks with an abstract class and each concrete class will implement its own operation.
+                    </p>
+                    <p>
+                        <b><u>Applicability</u></b>:
+                        <ul>
+                            <li>Similar operations have to be performed on objects of different types grouped in a structure (a collection or a more complex structure).
+                            <li>There are many distinct and unrelated operations needed to be performed. Visitor pattern allows us to create a separate visitor concrete class for each type of operation and to separate this operation implementation from the objects structure.
+                            <li>The object structure is not likely to be changed but is very probable to have new operations which have to be added. Since the pattern separates the visitor (representing operations, algorithms, behaviors) from the object structure it's very easy to add new visitors as long as the structure remains unchanged.
+
+                        </ul>
+                    </p>
+                    <p>
+                        <b><u>Hot Points</u></b>: 
+                        <ul>
+                            <li>[+] The visitor pattern is a great way to provide a flexible design for adding new visitors to extend existing functionality without changing existing code
+                            <li>[-] The Visitor pattern comes with a drawback: If a new visitable object is added to the framework structure all the implemented visitors need to be modified. The separation of visitors and visitable is only in one sense: visitors depend of visitable objects while visitable are not dependent of visitors.
+                            <li>[+] Part of the dependency problems can be solved by using reflection with a performance cost.
+
+                        </ul>
+                    </p>
+                </td>
+                <td valign="top">
+                    <p><b><u>Example</u></b></p>
+                    <p>
+                        <textarea id="code">
+package com.oo.behavioral.visitor;
+
+public class Code {
+    public static void main(String args[]) {
+        CarElement car = new Car();
+        car.accept(new CarElementPrintVisitor());
+    }
+}
+
+interface CarElementVisitor {
+    void visit(Engine engine);
+    void visit(Body body);
+    void visit(Car car);
+}
+class CarElementPrintVisitor implements CarElementVisitor {
+    public void visit(Engine engine) {
+        System.out.println("Engine=" + engine.getName());
+    }
+    public void visit(Body body) {
+        System.out.println("Engine=" + body.getName());
+    }
+    public void visit(Car car) {
+        System.out.println("Printing Car");
+    }
+}
+interface CarElement {
+    void accept(CarElementVisitor visitor);
+}
+class Engine implements CarElement {
+    private String name;
+    Engine(String name) {
+        this.name = name;
+    }
+    public void accept(CarElementVisitor visitor) {
+        visitor.visit(this);
+    }
+    public String getName() {
+        return name;
+    }
+}
+class Body implements CarElement {
+    private String name;
+    Body(String name) {
+        this.name = name;
+    }
+    public void accept(CarElementVisitor visitor) {
+        visitor.visit(this);
+    }
+    public String getName() {
+        return name;
+    }
+}
+class Car implements CarElement {
+    CarElement[] carElements;
+    Car() {
+        this.carElements = new CarElement[] {new Engine("V12"), new Body("Bentley")};
+    }
+    public void accept(CarElementVisitor visitor) {
+        for (CarElement carElement : carElements) {
+            carElement.accept(visitor);
+        }
+        visitor.visit(this);
+    }
+}
+                        </textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>
